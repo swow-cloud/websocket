@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of SwowCloud
- * @license  https://github.com/swow-cloud/music-server/blob/main/LICENSE
+ * @license  https://github.com/swow-cloud/websocket-server/blob/main/LICENSE
  */
 
 declare(strict_types=1);
@@ -9,10 +9,9 @@ declare(strict_types=1);
 namespace SwowCloud\WebSocket;
 
 use Psr\Container\ContainerInterface;
-use Swow\Http\Exception;
 use Swow\Http\Status;
-use Swow\Socket\Exception as SocketException;
-use Swow\WebSocket\Frame as WebSocketFrame;
+use Swow\Http\WebSocketFrame;
+use Swow\SocketException;
 use SwowCloud\Contract\StdoutLoggerInterface;
 use SwowCloud\WebSocket\Exception\BadRequestException;
 
@@ -38,8 +37,8 @@ class Sender
     {
         try {
             $connection = FdCollector::get($fd);
-            if ($connection->getType() !== $connection::TYPE_WEBSOCKET) {
-                throw new Exception(Status::BAD_GATEWAY, 'Unsupported Upgrade Type');
+            if ($connection->getProtocolType() !== $connection::PROTOCOL_TYPE_WEBSOCKET) {
+                throw new SocketException('Unsupported Upgrade Type', Status::BAD_GATEWAY);
             }
             if (is_string($message)) {
                 $connection->sendString($message, $timeout);
@@ -59,8 +58,8 @@ class Sender
     {
         try {
             $connection = FdCollector::get($fd);
-            if ($connection->getType() !== $connection::TYPE_WEBSOCKET) {
-                throw new Exception(Status::BAD_GATEWAY, 'Unsupported Upgrade Type');
+            if ($connection->getProtocolType() !== $connection::PROTOCOL_TYPE_WEBSOCKET) {
+                throw new SocketException('Unsupported Upgrade Type', Status::BAD_GATEWAY);
             }
             $connection->close();
             FdCollector::del($fd);
@@ -79,7 +78,7 @@ class Sender
             $connections = FdCollector::getConnections();
         }
         foreach ($connections as $connection) {
-            if ($connection->getType() !== $connection::TYPE_WEBSOCKET) {
+            if ($connection->getType() !== $connection::PROTOCOL_TYPE_WEBSOCKET) {
                 continue;
             }
             try {
