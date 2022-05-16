@@ -78,7 +78,7 @@ class Sender
             $connections = FdCollector::getConnections();
         }
         foreach ($connections as $connection) {
-            if ($connection->getType() !== $connection::PROTOCOL_TYPE_WEBSOCKET) {
+            if ($connection->getProtocolType() !== $connection::PROTOCOL_TYPE_WEBSOCKET) {
                 continue;
             }
             try {
