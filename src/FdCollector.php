@@ -27,7 +27,7 @@ class FdCollector
     {
         $connection = self::$connections[$fd];
         unset(self::$connections[$fd]);
-        if ($connection->isEstablished() && $connection->getType() === $connection::TYPE_WEBSOCKET) {
+        if ($connection->isEstablished() && $connection->getType() === $connection::PROTOCOL_TYPE_WEBSOCKET) {
             $connection->close();
         }
     }
